@@ -75,7 +75,6 @@ vector<int> DC3(vector<int>& str)
             b2.emplace_back(str[i], str[i+1], str[i+2], i);
     }
     
-    int b1_end = orig_b12.size();
 
     copy(begin(b2), end(b2), back_inserter(orig_b12));
     auto sorted_b12 = orig_b12;
@@ -152,7 +151,7 @@ vector<int> DC3(vector<int>& str)
     {
         if(i != b0.size() && j != sorted_b12.size())
         {
-            if(j < b1_end)
+            if(sorted_b12[j].idx % 3 == 1)
             {
                 
                 auto s0 = make_pair(b0[i].s1, b0[i].s2);
