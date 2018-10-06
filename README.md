@@ -14,7 +14,10 @@ These two algorithms can construct [**suffix array**](https://en.wikipedia.org/w
 ![](https://upload.wikimedia.org/wikipedia/de/2/25/Sais-bsp.gif)
 
 ---
+
 ## How to build
+**prerequisite**
+[google test](https://github.com/google/googletest)  
 
 ```bash
 git clone git@github.com:weisystak/suffix_array.git
