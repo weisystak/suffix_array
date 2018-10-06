@@ -1,10 +1,12 @@
+#pragma once
 #include <iostream>
 #include <string>
 #include <vector>
-#include <map>
 #include <algorithm>
 #include <iterator>
 #include <cassert>
+#include <tuple>
+#include <utility>
 
 using namespace std;
 
@@ -12,27 +14,39 @@ class Three_char_unit
 {
   public:
 
-    Three_char_unit(string& str, int idx):str(str), idx(idx){}
-    Three_char_unit(string& str, int i, int n, int idx):str(str, i, n), idx(idx){}
+    Three_char_unit(int s1, int idx):s1(s1), idx(idx){}
+    Three_char_unit(int s1, int s2, int s3, int idx):s1(s1), s2(s2), s3(s3), idx(idx){}
     bool operator<(const Three_char_unit& b)
     {
-        return str < b.str;
+        if(s1 != b.s1)
+        {
+            return s1 < b.s1;
+        }
+        else if(s2 != b.s2)
+        {
+            return s2 < b.s2;
+        }
+        else
+            return s3 < b.s3;
     }
 
     bool operator==(const Three_char_unit& b)
     {
-        return str == b.str;
+        if( s1 == b.s1 && s2 == b.s2 && s3 == b.s3 )
+            return true;
+        return false;
     }
 
     friend ostream& operator<<(ostream& o, const Three_char_unit& b)
     {
-        o<<b.str;
+        o<<b.s1<<b.s2<<b.s3;
         return o;
     }
 
-    string str;
+    int s1, s2, s3;
     int idx;
 };
+
 
 void append_remaining_idx(vector<Three_char_unit>& from, int beg1, vector<int>& to, int beg2)
 {
@@ -43,21 +57,22 @@ void append_remaining_idx(vector<Three_char_unit>& from, int beg1, vector<int>& 
     }
 }
 
-vector<int> DC3(string str)
+vector<int> DC3(vector<int>& str)
 {
-    int orig_len = str.length();
-    str += "$$";
+    int orig_len = str.size();
+    str.push_back(0);
+    str.push_back(0);
 
     vector<Three_char_unit> b0, b2, orig_b12;
 
     for(int i = 0; i < orig_len; ++i)
     {
         if(i % 3 == 0)
-            b0.emplace_back(str, i, 1, i);
+            b0.emplace_back(str[i] , i);
         else if( i % 3 == 1)
-            orig_b12.emplace_back(str, i, 3, i);
+            orig_b12.emplace_back( str[i], str[i+1], str[i+2], i);
         else
-            b2.emplace_back(str, i, 3, i);
+            b2.emplace_back(str[i], str[i+1], str[i+2], i);
     }
     
     int b1_end = orig_b12.size();
@@ -80,38 +95,43 @@ vector<int> DC3(string str)
     }
 
     vector<int> orig_rank(orig_len);
+    orig_rank.push_back(0);
+    orig_rank.push_back(0);
 
     if(is_even)
     {
-        char c = 'a';
-        orig_rank[ sorted_b12[0].idx ] = c;
-        for (int i = 1; i < sorted_b12.size(); ++i)
+        
+        orig_rank[ sorted_b12[0].idx ] = 1;
+        for (int i = 1, j = 1; i < sorted_b12.size(); ++i)
         {
-            if( sorted_b12[i].str == sorted_b12[i-1].str)
-                orig_rank[ sorted_b12[i].idx ] = c;
+            if( sorted_b12[i] == sorted_b12[i-1])
+                orig_rank[ sorted_b12[i].idx ] = j;
             else 
-                orig_rank[ sorted_b12[i].idx ] = ++c;
+                orig_rank[ sorted_b12[i].idx ] = ++j;
         }
-        string str2;
+        vector<int> str2;
         for(auto unit: orig_b12)
         {
-            str2 +=  orig_rank[ unit.idx ];
+            str2.push_back(orig_rank[ unit.idx ]);
         }
-        str2.push_back('$');
+        str2.push_back(0);
+        
         
         vector<int> SA2 = DC3(str2);
-
-        assert(SA2[0] == str2.length() -1);
-
+        assert(SA2[0] == str2.size() -1);
+        
         SA2.erase(begin(SA2));
 
+        
         for(int i = 0; i < SA2.size(); ++i)
         {
             orig_rank[ orig_b12[ SA2[i] ].idx ] = i;
+            sorted_b12[i] = orig_b12[ SA2[i] ];
         }
     }
     else
     {
+        
         for(int i = 0; i < sorted_b12.size(); ++i)
         {
             orig_rank[ sorted_b12[ i ].idx ] = i;
@@ -120,9 +140,9 @@ vector<int> DC3(string str)
 
     for(auto& unit: b0)
     {
-        if(unit.idx + 1 < orig_len)
-            unit.str += orig_rank[ unit.idx + 1 ];
+        unit.s2 = orig_rank[ unit.idx + 1 ];
     }
+
     sort(begin(b0), end(b0));
 
     vector<int> SA(orig_len);
@@ -134,14 +154,14 @@ vector<int> DC3(string str)
         {
             if(j < b1_end)
             {
-                string s0;
-                s0 += b0[i].str[0];
-                s0 += orig_rank[ b0[i].idx + 1 ];
-
-                string s1;
-                s1 += sorted_b12[j].str[0];
-                s1 += orig_rank[ sorted_b12[j].idx + 1 ];
                 
+                auto s0 = make_pair(b0[i].s1, b0[i].s2);
+                auto s1 = make_pair(sorted_b12[j].s1, 
+                                    orig_rank[ sorted_b12[j].idx + 1 ] 
+                                   );
+                
+                
+                assert(s0 != s1);
                 if(s0 < s1)
                 {
                     SA[sa_idx] = b0[i++].idx;
@@ -155,14 +175,18 @@ vector<int> DC3(string str)
             }
             else
             {
-                string s0;
-                s0 += b0[i].str[0];
-                s0 += orig_rank[ b0[i].idx + 1 ];
-
-                string s2;
-                s2 += sorted_b12[j].str[0];
-                s2 += orig_rank[ sorted_b12[j].idx + 1 ];
+                auto s0 = make_tuple(b0[i].s1, 
+                                       str[ b0[i].idx+1 ],
+                                       orig_rank[ b0[i].idx + 2 ]
+                                      );
+            
+                auto s2 = make_tuple(sorted_b12[j].s1, 
+                                       str[ sorted_b12[j].idx+1 ],
+                                       orig_rank[ sorted_b12[j].idx + 2 ]
+                                      );
                 
+                
+                assert(s0 != s2);
                 if(s0 < s2)
                 {
                     SA[sa_idx] = b0[i++].idx;
@@ -186,17 +210,6 @@ vector<int> DC3(string str)
             break;
         }
     }
-
+    str.erase(str.end()-2, str.end());
     return SA;
-}
-
-int main()
-{
-    string str = "mississippi";
-    str.push_back('$');
-
-    auto v = DC3(str);
-
-    for(auto i : v)
-       cout<<str.substr(i)<<endl;
 }
