@@ -20,7 +20,7 @@ These two algorithms can construct [**suffix array**](https://en.wikipedia.org/w
 [google test](https://github.com/google/googletest)  
 
 ```bash
-git clone git@github.com:weisystak/suffix_array.git
+git clone https://github.com/weisystak/suffix_array.git
 cd suffix_array
 mkdir build && cd build
 cmake ..
