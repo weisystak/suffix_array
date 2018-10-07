@@ -12,7 +12,7 @@ These two algorithms can construct [**suffix array**](https://en.wikipedia.org/w
 ## SA-IS
 
 ![](https://upload.wikimedia.org/wikipedia/de/2/25/Sais-bsp.gif)
-
+![](https://ieeexplore.ieee.org/mediastore_new/IEEE/content/media/12/6008534/5582081/5582081-fig-1-source-small.gif)
 ---
 
 ## How to build
