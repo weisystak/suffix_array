@@ -1,7 +1,6 @@
 #include <DC3.hpp>
 #include <gtest/gtest.h>
 #include <fstream>
-#include <streambuf>
 
 vector<string> get_all_sorted_rotate(string& str)
 {
@@ -60,7 +59,24 @@ TEST(DC3, file)
         string L1 = get_L_via_SA(SA, str);
         string L2 = get_L_via_all_rotate(str);
         
-        EXPECT_EQ(L1, L2);   
+        /*
+        *rbegin(str) = '$';
+        cout<<"L1******************************************"<<endl;
+        for(auto i:SA)
+        {
+            cout<<str.substr(i, 150)<<endl;
+        }
+
+        cout<<"L2******************************************"<<endl;
+        auto a = get_all_sorted_rotate(str);
+        for(auto b:a)
+        {
+            cout<<b.substr(0, 150)<<endl;
+        }
+        */
+        EXPECT_EQ(L1, L2);
+
+        
     }
     
 }
