@@ -1,10 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
-#include <algorithm>
 #include <map>
-#include <set>
-#include <array>
 
 #define L_TYPE 0
 #define S_TYPE 1
@@ -16,22 +13,6 @@ struct BucketIdx{
 
 };
 
-struct TypeCnt{
-    int L_cnt, S_cnt;
-};
-
-struct LMS{
-    
-    string str;
-    int idx;
-
-    LMS(string s, int i): str(s), idx(i){}
-    
-    bool operator<(const LMS& b)
-    {
-        return str < b.str;
-    }
-};
 
 inline bool isLMS(int i, vector<bool> type)
 {

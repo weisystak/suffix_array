@@ -1,4 +1,4 @@
-#include <sais.hpp>
+#include <SAIS.hpp>
 #include <gtest/gtest.h>
 #include <fstream>
 
