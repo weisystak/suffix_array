@@ -12,7 +12,7 @@ These two algorithms can construct [**suffix array**](https://en.wikipedia.org/w
 ## SA-IS
 
 ![](https://upload.wikimedia.org/wikipedia/de/2/25/Sais-bsp.gif)
-
+![](https://ieeexplore.ieee.org/mediastore_new/IEEE/content/media/12/6008534/5582081/5582081-fig-1-source-small.gif)
 ---
 
 ## How to build
@@ -20,7 +20,7 @@ These two algorithms can construct [**suffix array**](https://en.wikipedia.org/w
 [google test](https://github.com/google/googletest)  
 
 ```bash
-git clone git@github.com:weisystak/suffix_array.git
+git clone https://github.com/weisystak/suffix_array.git
 cd suffix_array
 mkdir build && cd build
 cmake ..
