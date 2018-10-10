@@ -26,4 +26,5 @@ mkdir build && cd build
 cmake ..
 make
 ./DC3_test
+./SAIS_test
 ```
