@@ -103,18 +103,25 @@ void radix_pass(
         }
 }
 
-void radix_sort(vector<Three_char_unit>::iterator array_itr, int size)
+void radix_sort(vector<Three_char_unit>::iterator array_itr, int size, int depth)
 {
     vector<Three_char_unit> container(array_itr, array_itr+size);
-
-    // radix pass x3
-    radix_pass(container.begin(), array_itr, size, 2);
-    radix_pass(array_itr, container.begin(), size, 1);
-    radix_pass(container.begin(), array_itr, size, 0);
+    if(depth == 2)
+    {
+        radix_pass(array_itr, container.begin(), size, 1);
+        radix_pass(container.begin(), array_itr, size, 0);
+    }
+    else
+    {
+        // radix pass x3
+        radix_pass(container.begin(), array_itr, size, 2);
+        radix_pass(array_itr, container.begin(), size, 1);
+        radix_pass(container.begin(), array_itr, size, 0);
+    }
 }
 
 template <int NUM_THREAD>
-void parallel_radix_sort(vector<Three_char_unit> &array)
+void parallel_radix_sort(vector<Three_char_unit> &array, int depth)
 {
     //distribute work load
     std::vector<std::vector<Three_char_unit>> work(NUM_THREAD);
@@ -129,10 +136,10 @@ void parallel_radix_sort(vector<Three_char_unit> &array)
     thread workers[NUM_THREAD];
     for(int i = 0; i < NUM_THREAD-1; i++)
     {
-        workers[i] = thread(radix_sort, work[i].begin(), work[i].size());
+        workers[i] = thread(radix_sort, work[i].begin(), work[i].size(), depth);
     }
     // main thread do the work
-    radix_sort(work[NUM_THREAD-1].begin(), work[NUM_THREAD-1].size());
+    radix_sort(work[NUM_THREAD-1].begin(), work[NUM_THREAD-1].size(), depth);
     // join
     for(int i = 0; i < NUM_THREAD-1; i++)
         workers[i].join();
@@ -177,7 +184,8 @@ vector<int> DC3(vector<int>& str)
 
     copy(begin(b2), end(b2), back_inserter(orig_b12));
     auto sorted_b12 = orig_b12;
-    parallel_radix_sort<NUM_THREAD>(sorted_b12);
+    int radix_pass_depth = 3;
+    parallel_radix_sort<NUM_THREAD>(sorted_b12, radix_pass_depth);
 
 
     bool is_even = false;
@@ -238,7 +246,9 @@ vector<int> DC3(vector<int>& str)
         unit.s2 = orig_rank[ unit.idx + 1 ];
     }
 
-    sort(begin(b0), end(b0));
+    radix_pass_depth = 2;
+    parallel_radix_sort<NUM_THREAD>(b0, radix_pass_depth);
+
 
     vector<int> SA(orig_len);
 

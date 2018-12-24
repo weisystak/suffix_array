@@ -55,7 +55,8 @@ TEST(radix_sort, each_worker)
         );
 
 
-    radix_sort(tuple_array.begin(), tuple_array.size());
+    int radix_pass_depth = 3;
+    radix_sort(tuple_array.begin(), tuple_array.size(), radix_pass_depth);
 
     vector<int> result;
     for(auto i : tuple_array)
@@ -80,7 +81,8 @@ TEST(radix_sort, parallel)
         );
 
     auto sorted = tuple_array;
-    parallel_radix_sort<num_thread>(sorted);
+    int radix_pass_depth = 3;
+    parallel_radix_sort<num_thread>(sorted, radix_pass_depth);
 
     vector<int> result;
     for(auto i : sorted)
