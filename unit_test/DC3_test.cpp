@@ -40,6 +40,57 @@ string get_L_via_SA(vector<int>& SA, string& str)
     return L;
 }
 
+TEST(radix_sort, each_worker)
+{
+    vector<int> array = {123, 321, 211, 321, 611};
+    vector<int> ans = {0, 2, 1, 3, 4}; // ascending sort
+    vector<Three_char_unit> tuple_array;
+    
+    for(int i = 0; i < array.size(); i++)
+        tuple_array.emplace_back(
+            array[i]/100
+          , (array[i]%100)/10 
+          , (array[i]%10)
+          , i
+        );
+
+
+    int radix_pass_depth = 3;
+    radix_sort(tuple_array.begin(), tuple_array.size(), radix_pass_depth);
+
+    vector<int> result;
+    for(auto i : tuple_array)
+        result.emplace_back(i.idx);
+
+    EXPECT_EQ(result, ans);
+}
+
+TEST(radix_sort, parallel)
+{
+    vector<int> array = {100, 300, 200, 300, 600};
+    vector<int> ans = {0, 2, 1, 3, 4}; // ascending sort
+    vector<Three_char_unit> tuple_array;
+    constexpr unsigned int num_thread = 1;
+
+    for(int i = 0; i < array.size(); i++)
+        tuple_array.emplace_back(
+            array[i]/100
+          , (array[i]%100)/10 
+          , (array[i]%10)
+          , i
+        );
+
+    auto sorted = tuple_array;
+    int radix_pass_depth = 3;
+    parallel_radix_sort<num_thread>(sorted, radix_pass_depth);
+
+    vector<int> result;
+    for(auto i : sorted)
+        result.emplace_back(i.idx);
+
+    EXPECT_EQ(result, ans);
+}
+
 TEST(DC3, file)
 {
     ifstream ifs("unit_test/test_data/strings.txt");
@@ -47,7 +98,6 @@ TEST(DC3, file)
 
     while(getline(ifs, str))
     {
-
         str.push_back(0);
 
         vector<int> v;
@@ -55,7 +105,7 @@ TEST(DC3, file)
             v.push_back(c);
         
         
-        auto SA = DC3(v);
+        auto SA = DC3<1>(v);
         string L1 = get_L_via_SA(SA, str);
         string L2 = get_L_via_all_rotate(str);
         
@@ -80,3 +130,5 @@ TEST(DC3, file)
     }
     
 }
+
+
